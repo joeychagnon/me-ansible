@@ -1,0 +1,44 @@
+Build Process:
+
+(1.0) prepare the machine
+
+- image the latest version of ArchLinux-Arm to your SD card
+- create a 512MB swap partition
+- use gparted or some other tool to expand the SECOND partition
+- boot the machine with network access
+- get networking working; it should already be configured for basic dhcp
+- take note of what IP the dhcp server gave the machine
+- edit /etc/ssh/sshd_config to allow root ssh access
+- restart sshd
+
+(2.0) configure the machine
+
+- if you're feeling risky reconfigure everything with site.yml
+- if you're not configure the machine with joey-pi.yml or a limit directive
+
+What needs done:
+
+- set the hostname in /etc/hostname
+- set localtime by linking /usr/share/zoneinfo/... to /etc/localtime
+- add required locales in /etc/locale.gen
+- add settings to /etc/locale.conf
+- create admin users; me
+- configure the network properly; use systemd-networkd with dhcp
+- rename network interfaces; this should already be done
+- rename the sdcard /dev node to something less stupid
+- create the /etc/skel directory
+- change the motd to something less stupid; change daily
+
+- install core packages
+	- dns utilities 
+	- network utilities
+	- sudo
+	- vim
+	- wget
+	- curl
+	- rsync
+	- python 3
+	- perl
+	- zsh; possibly
+
+- from here roles should be able to take over
