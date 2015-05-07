@@ -1,0 +1,4 @@
+# ansible/.gitignore
+
+# Ignore log files
+logs
