@@ -1,0 +1,23 @@
+---
+
+- name: configure openvpn
+  copy: src=server.conf dest=/etc/openvpn/server.conf owner=root group=root mode=600
+  notify: restart openvpn
+
+- name: configure easy-rsa
+  unarchive: src=easy-rsa.tar.gz dest=/etc/openvpn creates=/etc/openvpn/easy-rsa/gen-ovpn.sh
+
+- name: enable openvpn
+  service: name=openvpn@server state=started enabled=yes
+
+- name: enable ip forwarding
+  copy: src=sysctl.conf dest=/etc/sysctl.d/sysctl.conf owner=root group=root mode=644
+  notify: reload kernel params
+      
+- name: configure iptables
+  copy: src=iptables.rules dest=/etc/iptables/iptables.rules owner=root group=root mode=644
+  notify: restart iptables
+
+- name: enable iptables
+  service: name=iptables state=started enabled=yes
+

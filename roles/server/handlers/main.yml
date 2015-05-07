@@ -1,0 +1,31 @@
+---
+
+- name: restart cups
+  service: name=org.cups.cupsd state=restarted
+
+- name: restart dnsmasq
+  service: name=dnsmasq state=restarted
+
+- name: restart lighttpd
+  service: name=lighttpd state=restarted
+      
+- name: restart mysql
+  service: name=mysqld state=restarted
+
+- name: restart openvpn
+  service: name=openvpn@server state=restarted
+
+- name: restart sshd
+  service: name=sshd state=restarted
+
+- name: restart samba
+  service: name=smbd state=restarted
+
+- name: restart iptables
+  service: name=iptables state=restarted
+
+- name: restart tor
+  service: name=tor state=restarted
+
+- name: reload kernel params
+  command: sysctl -p

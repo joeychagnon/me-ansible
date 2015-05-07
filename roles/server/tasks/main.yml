@@ -1,0 +1,20 @@
+---
+
+# Packages
+- include: install_packages.yml
+
+# Internal Services
+- include: setup_ntp.yml
+- include: setup_cups.yml
+- include: setup_dnsmasq.yml
+- include: setup_samba.yml
+- include: setup_cron.yml
+
+# External Services
+- include: setup_sshd.yml
+- include: setup_lighttpd.yml
+- include: setup_openvpn.yml
+- include: setup_php.yml
+- include: setup_mysql.yml
+- include: setup_owncloud.yml
+- include: setup_tor.yml

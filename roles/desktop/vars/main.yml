@@ -1,0 +1,29 @@
+---
+
+sql_oc_password: vetohv0U
+sql_root_password: keeB1lee
+
+server_packages:
+  - ansible
+  - samba
+  - cups
+  - cups-filters
+  - cups-pdf
+  - dnsmasq
+  - easy-rsa
+  - openvpn
+  - lighttpd
+  - aria2
+  - php
+  - php-apcu
+  - php-cgi
+  - php-gd
+  - php-intl
+  - php-mcrypt
+  - php-sqlite
+  - php-xcache
+  - mysql-python
+  - mariadb
+  - owncloud
+  - wget
+  - tor

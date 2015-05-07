@@ -1,0 +1,17 @@
+---
+
+- name: create tor group
+  group: name=tor system=yes state=present
+
+- name: create tor user
+  user: name=tor group=tor createhome=no state=present system=yes
+
+- name: configure tor
+  copy: src=torrc dest=/etc/torrc owner=root group=root mode=644
+  notify: restart tor
+
+- name: set directory permissions
+  file: dest=/var/lib/tor state=directory owner=tor group=tor mode=644 recurse=yes
+
+- name: enable and start tor
+  service: name=tor enabled=yes state=started

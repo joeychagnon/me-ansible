@@ -1,0 +1,8 @@
+---
+
+- name: configure systemd-timesyncd
+  copy: src=timesyncd.conf dest=/etc/systemd/timesyncd.conf owner=root group=root mode=644
+
+- name: enable systemd-timesyncd
+  command: timedatectl set-ntp 1
+

@@ -1,0 +1,41 @@
+hostname: joey-pi
+ansible_python_interpreter: /usr/bin/python2.7
+
+users:
+  -
+    name: root
+    comment: Root
+    group: root
+    password: b2GrGoNqsAGpU
+    pw_plain: Naturalgold22
+  -
+    name: joey
+    comment: Joey
+    group: users
+    groups: wheel
+    password: angc3Q2D7FgKk
+    pw_plain: Naturalgold22
+  -
+    name: ashley
+    comment: Ashley
+    group: users
+    password: cuhqtNLFrAfy6
+    pw_plain: boobs
+  -
+    name: alice
+    comment: Alice
+    group: users
+    password: jaG1ksxFLFvpM
+    pw_plain: inwonderland
+  -
+    name: dev
+    comment: Developer
+    group: users
+    password: XoCsHQcWgv.BI
+    pw_plain: dev
+  -
+    name: guest
+    comment: Guest
+    group: users
+    password: thvFU33S3I1Z6
+    pw_plain: friend

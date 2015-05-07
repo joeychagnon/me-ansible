@@ -1,0 +1,13 @@
+#! /usr/bin/env bash
+
+# config
+
+log="/var/log/speedtest.log"
+
+# calculate the speed
+
+speed=$(wget -O /dev/null http://speedtest.wdc01.softlayer.com/downloads/test10.zip --report-speed=bits 2>&1 | sed -n 's/.*(\(.*\)).*saved.*/\1/p')
+
+# log the speed
+
+echo "$(date +'%b %d %T') $(hostname) inet: $speed" >> "$log"

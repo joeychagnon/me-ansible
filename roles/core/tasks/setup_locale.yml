@@ -1,0 +1,8 @@
+---
+
+- name: configure locales
+  copy: src=locale.gen dest=/etc/locale.gen owner=root group=root mode=644
+
+- name: generate locales
+  command: locale-gen
+

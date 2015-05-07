@@ -1,0 +1,17 @@
+---
+
+- name: configure owncloud
+  file: dest=/srv/http/owncloud src=/usr/share/webapps/owncloud state=link
+
+- name: set correct permissions
+  file: dest={{ item }} owner=http group=http recurse=yes state=directory
+  with_items:
+    - /usr/share/webapps/owncloud
+    - /etc/webapps/owncloud
+
+- name: add owncloud user to mysql
+  mysql_user: name="ocuser" password={{ sql_oc_password }} priv=owncloud.*:ALL state=present
+
+- name: create owncloud database
+  mysql_db: name=owncloud state=present
+

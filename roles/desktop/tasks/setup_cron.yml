@@ -1,0 +1,10 @@
+---
+
+- name: enable cronie
+  service: name=cronie state=started enabled=yes
+
+- name: add cron jobs
+  copy: src={{ item }} dest=/etc/cron.hourly/{{ item }} owner=root group=root mode=755
+  with_items:
+    - check-network-speed
+

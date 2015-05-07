@@ -1,0 +1,28 @@
+# /etc/sudoers
+
+#--------------------------------- Information ---------------------------------
+#   Author: Joey Chagnon
+#     Date: 2015-02-16
+# Man Page: sudoers(5)
+# Notation: examples are commented.
+
+#-------------------------------- Global Config --------------------------------
+
+# enable logging of a command's output
+Defaults log_output
+Defaults!/usr/bin/sudoreplay !log_output
+Defaults!/usr/local/bin/sudoreplay !log_output
+Defaults!/sbin/reboot !log_output
+
+#--------------------------------- User Config ---------------------------------
+
+# allow root to run all commands
+root ALL=(ALL) ALL
+
+# allow members of wheel to run all commands
+%wheel ALL=(ALL) ALL
+
+#------------------------------------ Misc. ------------------------------------
+
+# read files from /etc/sudoers.d
+#includedir /etc/sudoers.d

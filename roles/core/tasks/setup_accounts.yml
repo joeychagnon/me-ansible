@@ -1,0 +1,11 @@
+---
+
+- name: create accounts
+  user:
+    name: '{{ item.name }}'
+    group: '{{ item.group | default( ) }}'
+    groups: '{{ item.groups | default( ) }}'
+    password: '{{ item.password | default( )  }}'
+    update_password: on_create
+    state: present
+  with_items: users

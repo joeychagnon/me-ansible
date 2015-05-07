@@ -1,0 +1,53 @@
+#! /usr/bin/env bash
+
+# Arguments:
+# name   - the name of the name to modify
+# state  - the state of that name in the database
+# create - a boolean to create a name account with that name if it doesn't
+#          already exist.
+
+arg_file="$1"
+
+if [[ ! -f "$arg_file" ]]; then
+	exit 1
+fi
+
+# Get the arguments
+name=$(grep -oP "^(?=name\=).*$")
+create=$(grep -oP "^(?=create\=).*$")
+state=$(grep -oP "^(?=create\=).*$")
+password=$(grep -oP "^(?=password\=).*$")
+
+# Variables
+changed="no"
+
+# Check if the name in question exists
+if ! getent passwd "$name" > /dev/null 2>&1; then
+	if [[ -n "$create" ]]; then
+		nameadd -g names -M -N -s /bin/nologin "$name"
+	else
+		exit 2
+	fi
+fi
+
+# Check if the name is in the database already
+if pdbedit -L | grep "^$name:" > /dev/null 2>&1; then
+	if [[ "state" = "absent" ]]; then
+		pdbedit -u "$name" -x
+		changed="yes"
+	fi
+else
+	if [[ -z "$password" ]]; then
+		exit 3
+	fi
+	if [[ "state" = "present" ]]; then
+		echo $password\n$password | pdbedit -u "$name" -a -t
+		changed="yes"
+	fi
+fi
+
+if [[ "$changed" = "yes" ]]; then
+	echo "changed=true"
+else
+	echo "changed=false"
+fi

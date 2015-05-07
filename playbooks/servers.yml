@@ -1,0 +1,7 @@
+---
+
+- hosts: servers
+  roles:
+#    - core
+    - server
+

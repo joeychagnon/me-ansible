@@ -1,0 +1,11 @@
+---
+
+- include: install_packages.yml
+
+- include: setup_locale.yml
+
+- include: set_hostname.yml
+
+- include: set_timezone.yml
+
+- include: setup_accounts.yml

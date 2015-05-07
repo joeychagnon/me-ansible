@@ -1,0 +1,19 @@
+# /etc/hosts
+
+#--------------------------------- Information ---------------------------------
+#   Author: Joey Chagnon
+#     Date: 2015-02-13
+# Man Page: ssh_config(5)
+#   Format: <ip-address> <hostname.domain.org> <hostname>
+
+#-------------------------------- Default Hosts --------------------------------
+
+127.0.0.1	localhost.localdomain	localhost
+::1		localhost.localdomain	localhost
+
+#--------------------------------- Added Hosts ---------------------------------
+
+192.168.1.1    joey-router
+192.168.1.2    ashley-router
+192.168.1.254  joey-pi
+192.168.1.253  joey-printer

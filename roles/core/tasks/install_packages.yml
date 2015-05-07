@@ -1,0 +1,8 @@
+---
+
+#- name: upgrade system
+#  command: pacman -Syu --noconfirm
+
+- name: install core packages
+  pacman: name={{ item }} state=present
+  with_items: core_packages
