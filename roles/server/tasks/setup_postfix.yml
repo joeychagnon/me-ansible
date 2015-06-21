@@ -1,0 +1,51 @@
+---
+
+- name: configure postfix
+  copy:
+    src: main.cf
+    dest: /etc/postfix/main.cf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: start and enable postfix
+  service:
+    name: postfix
+    state: started
+    enabled: yes
+
+- name: add error reporting service
+  copy:
+    src: report-failure@.service
+    dest: /etc/systemd/system/report-failure@.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: add error reporting script
+  template:
+    src: report-failure.sh.j2
+    dest: /usr/bin/report-failure.sh
+    owner: root
+    group: root
+    mode: 0755
+
+- name: add service override directories
+  file:
+    dest: /etc/systemd/system/{{ item }}.service.d
+    owner: root
+    group: root
+    mode: 0755
+    state: directory
+  with_items: reporting_services
+
+- name: add error reporting to existing services
+  template:
+    src: report-failure.conf.j2
+    dest: /etc/systemd/system/{{ item }}.service.d/report-failure.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - reload daemons
+  with_items: reporting_services

@@ -18,8 +18,11 @@
 - name: restart sshd
   service: name=sshd state=restarted
 
-- name: restart samba
+- name: restart smbd
   service: name=smbd state=restarted
+
+- name: restart nmbd
+  service: name=nmbd state=restarted
 
 - name: restart iptables
   service: name=iptables state=restarted
@@ -27,5 +30,11 @@
 - name: restart tor
   service: name=tor state=restarted
 
+- name: restart postfix
+  service: name=postfix state=restarted
+
 - name: reload kernel params
   command: sysctl -p
+
+- name: reload daemons
+  command: systemctl daemon-reload

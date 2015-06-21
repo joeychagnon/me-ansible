@@ -3,7 +3,6 @@
 core_packages:
   - ansible
   - archey3
-# - base-devel
   - bash
   - bash-completion
   - cronie

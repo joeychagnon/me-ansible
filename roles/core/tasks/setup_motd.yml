@@ -1,0 +1,10 @@
+---
+
+- name: configure motd
+  copy:
+    src: motd
+    dest: /etc/motd
+    owner: root
+    group: root
+    mode: 0644
+

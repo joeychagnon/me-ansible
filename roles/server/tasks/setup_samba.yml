@@ -2,7 +2,9 @@
 
 - name: configure samba
   copy: src=smb.conf dest=/etc/samba/smb.conf owner=root group=root mode=644
-  notify: restart samba
+  notify:
+    - restart smbd
+    - restart nmbd
 
 - name: create share directories
   file: dest=/srv/smb/{{ item }} state=directory

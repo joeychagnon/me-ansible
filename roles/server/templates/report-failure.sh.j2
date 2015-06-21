@@ -1,0 +1,7 @@
+#! /usr/bin/env bash
+
+mail -s "Error: $1 failed" "{{ report_email }}" <<EOF
+   Host: {{ hostname }}
+Service: $1
+  State: FAILED
+EOF

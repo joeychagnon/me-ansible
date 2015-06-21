@@ -1,13 +1,15 @@
 #! /usr/bin/env bash
 
-# config
+#-------------------------------- Information ----------------------------------
+# Author: Joey Chagnon
+#   Date: 2015-06-20
+
+#----------------------------------- Vars --------------------------------------
 
 log="/var/log/speedtest.log"
 
-# calculate the speed
+#----------------------------------- Main --------------------------------------
 
 speed=$(wget -O /dev/null http://speedtest.wdc01.softlayer.com/downloads/test10.zip --report-speed=bits 2>&1 | sed -n 's/.*(\(.*\)).*saved.*/\1/p')
-
-# log the speed
 
 echo "$(date +'%b %d %T') $(hostname) inet: $speed" >> "$log"

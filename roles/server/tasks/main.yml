@@ -17,4 +17,5 @@
 - include: setup_php.yml
 - include: setup_mysql.yml
 - include: setup_owncloud.yml
-- include: setup_tor.yml
+- include: setup_tor.yml tags=tor
+- include: setup_postfix.yml tags=postfix
