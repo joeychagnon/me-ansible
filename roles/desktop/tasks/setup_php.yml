@@ -1,5 +1,0 @@
----
-
-- name: configure php
-  copy: src=php.ini dest=/etc/php/php.ini owner=root group=root mode 644
-

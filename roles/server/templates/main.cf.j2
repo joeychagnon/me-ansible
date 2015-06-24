@@ -1,0 +1,51 @@
+# /etc/postfix/main.cf
+
+#-------------------------------- Information ----------------------------------
+#   Author: Joey Chagnon
+#     Date: 2015-06-20
+# Man Page: postconf(5)
+
+#--------------------------------- General -------------------------------------
+
+compatibility_level = 2
+
+mail_owner = postfix
+myhostname = {{ public_hostname }}
+mydomain = ddns.net
+myorigin = $myhostname
+inet_interfaces = loopback-only
+
+unknown_local_recipient_reject_code = 550
+
+alias_maps = hash:/etc/postfix/aliases
+alias_database = $alias_maps
+
+#--------------------------------- Debugging -----------------------------------
+  
+debug_peer_level = 2
+debugger_command =
+	 PATH=/bin:/usr/bin:/usr/local/bin:/usr/X11R6/bin
+	 ddd $daemon_directory/$process_name $process_id & sleep 5
+setgid_group = postdrop
+html_directory = no
+
+
+#-------------------------------- Mail Paths -----------------------------------
+
+queue_directory = /var/spool/postfix
+command_directory = /usr/bin
+daemon_directory = /usr/lib/postfix/bin
+data_directory = /var/lib/postfix
+
+#-------------------------------- System Paths ---------------------------------
+
+manpage_directory = /usr/share/man
+sample_directory = /etc/postfix
+readme_directory = /usr/share/doc/postfix
+inet_protocols = ipv4
+meta_directory = /etc/postfix
+shlib_directory = /usr/lib/postfix
+
+sendmail_path = /usr/bin/sendmail
+newaliases_path = /usr/bin/newaliases
+mailq_path = /usr/bin/mailq
