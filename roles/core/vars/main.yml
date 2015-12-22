@@ -1,47 +1,74 @@
 ---
 
 core_packages:
-  - ansible
-  - archey3
+  # Shell
   - bash
   - bash-completion
-  - cronie
-  - dnsutils
-  - git
-  - gnupg
-  - gnupg
-  - gnutls
-  - gzip
-  - htop
-  - inetutils
-  - iputils
-  - lsof
-  - moreutils
-  - net-tools
-  - nmap
-  - ntfs-3g
+  - zsh
   - openssh
-  - perl
-  - pkgfile
-  - pkgstats
-  - polkit 
-  - python
-  - rng-tools
-  - rsync
-  - sqlite
-  - sudo
-  - sudo
-  - tar
   - tmux
-  - traceroute
-  - tree
-  - unzip
-  - usbutils
+  - coreutils
+  - moreutils
+  - findutils
+  # Dev
+  - ansible
+  - diffutils
+  - git
+  # Editor
   - vim-minimal
   - vimpager
   - vim-spell-en
   - vim-systemd
-  - which
+  - less
+  # Archiving
+  - gzip
+  - bzip2
   - xz
   - zip
-  - zsh
+  - unzip
+  - tar
+  - p7zip
+  # System Monitoring
+  - atop
+  - lsof
+  - powertop
+  - htop
+  - top
+  - procps-ng
+  - iotop
+  - sysstat
+  - tcpdump
+  - strace
+  # Utilities
+  - archey3
+  - irssi
+  - grep
+  - sed
+  - awk
+  - rng-tools
+  - tree
+  - pwgen
+  - pkgfile
+  - which
+  - mutt
+  # Encryption 
+  - gnupg
+  - encfs
+  - pam_encfs
+  - cryptsetup
+  # Languages
+  - perl
+  - python
+  - sqlite
+  # System
+  - sudo
+  # Network
+  - bind-utils
+  - inetutils
+  - iproute2
+  - iputils
+  - net-tools
+  - nmap
+  - rsync
+  - traceroute
+  - mtr

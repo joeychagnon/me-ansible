@@ -1,21 +1,22 @@
 ---
 
 # Packages
-- include: install_packages.yml
+- include: install_packages.yml tags=server,ntp,cups,dns,samba,cron,ssh,http,vpn,php,sql,cloud,tor,mail
 
 # Internal Services
-- include: setup_ntp.yml
-- include: setup_cups.yml
-- include: setup_dnsmasq.yml
-- include: setup_samba.yml
-- include: setup_cron.yml
+- include: setup_ntp.yml tags=server,ntp
+- include: setup_cups.yml tags=server,cups
+- include: setup_dnsmasq.yml tags=server,dns
+- include: setup_samba.yml tags=server,samba
+- include: setup_cron.yml tags=server,cron
+- include: setup_haveged.yml tags=server
 
 # External Services
-- include: setup_sshd.yml
-- include: setup_lighttpd.yml
-- include: setup_openvpn.yml
-- include: setup_php.yml
-- include: setup_mysql.yml
-- include: setup_owncloud.yml
-- include: setup_tor.yml tags=tor
-- include: setup_postfix.yml tags=postfix
+- include: setup_sshd.yml tags=server,ssh
+- include: setup_lighttpd.yml tags=server,http
+- include: setup_openvpn.yml tags=server,vpn
+- include: setup_php.yml tags=server,php
+- include: setup_mysql.yml tags=server,sql
+- include: setup_owncloud.yml tags=server,cloud
+- include: setup_tor.yml tags=server,tor
+- include: setup_postfix.yml tags=server,mail

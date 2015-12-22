@@ -2,35 +2,35 @@
 
 - name: configure lighttpd
   copy:
-		src: lighttpd.conf
-		dest: /etc/lighttpd/lighttpd.conf
-		owner: root
-		group: root
-		mode: 0644
+    src: lighttpd.conf
+    dest: /etc/lighttpd/lighttpd.conf
+    owner: root
+    group: root
+    mode: 0644
   notify: restart lighttpd
 
 - name: create lighttpd conf directory
   file:
-		dest: /etc/lighttpd/conf.d
-		state: directory
-		owner: root
-		group: root
-		mode: 0755
+    dest: /etc/lighttpd/conf.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
 
 - name: configure fastcgi
   copy:
-	src: fastcgi.conf
-	dest: /etc/lighttpd/conf.d/fastcgi.conf
-	owner: root
-	group: root
-	mode: 0644
-  notify: restart lighttpd
+    src: fastcgi.conf
+    dest: /etc/lighttpd/conf.d/fastcgi.conf
+    owner: root
+    group: root
+    mode: 0644
+    notify: restart lighttpd
 
 - name: configure ssl
   copy:
-		src: server.pem
-		dest: /etc/lighttpd/ssl/{{ public_hostname }}/server.pem
-		owner: root
-		group: root
-		mode: 0600
+    src: server.pem
+    dest: /etc/lighttpd/ssl/{{ public_hostname }}/server.pem
+    owner: root
+    group: root
+    mode: 0600
   notify: restart lighttpd

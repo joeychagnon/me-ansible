@@ -1,10 +1,10 @@
 ---
 
-- include: install_packages.yml
+- include: install_packages.yml tags=core,hostname,accounts
 
-- include: set_hostname.yml
-- include: set_timezone.yml
+- include: set_hostname.yml tags=core,hostname
+- include: set_timezone.yml tags=core
 
-- include: setup_accounts.yml
-- include: setup_locale.yml
-- include: setup_motd.yml
+- include: setup_accounts.yml tags=core,accounts
+- include: setup_locale.yml tags=core
+- include: setup_motd.yml tags=core
