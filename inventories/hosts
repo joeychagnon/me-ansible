@@ -1,5 +1,5 @@
 [desktops]
-192.168.1.4
+joey-laptop.local
 
 [servers]
-192.168.1.254
+joey-pi.local
