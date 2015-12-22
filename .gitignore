@@ -1,5 +1,7 @@
-# ansible/.gitignore
+# .gitignore
 
-# log files
+# Log Files
 logs
 
+# Vault Password
+.vault_passwd
