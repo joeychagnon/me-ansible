@@ -1,0 +1,233 @@
+#! /usr/bin/env python2.7
+
+DOCUMENTATION = """
+---
+module: grub_cmdline
+short_description: Modifies the default kernel parameters.
+description:
+    - Modifies the parameters which GRUB passes to the kernel at boot time.
+version_added: "1.9.2"
+author: Joey Chagnon
+requirements:
+    - grub
+options:
+    option_name: name
+        description:
+            - The name of the parameter to modify 
+        required: true
+        default: null
+        version_added: 1.9.2
+
+    option_name: value
+        description:
+            - The value of the parameter (if it has one)
+        required: false
+        default: null
+        version_added: 1.9.2
+
+    option_name: state
+        description:
+            - Whether the parameter should be added or removed
+        required: False
+        default: present
+        choices: [present, absent]
+        version_added: 1.9.2
+
+    option_name: dup
+        description:
+            - A boolan flag indicating whether the parameter may be specified multiple times.
+            - Does not work when value isn't specified.
+        required: False
+        default: False
+        choices: [True, False]
+        aliases: [duplicate]
+        version_added: 1.9.2
+"""
+
+import sys
+import tempfile
+import os
+
+class LinuxCfg(object):
+    """
+    This is a generic Linux kernel manipulation class that is subclassed
+    based on the bootloader.
+
+    A subclass may wish to override the following action methods:-
+        - read_config()
+        - write_config()
+
+    The function read_config must set the value param_str to the string
+    representing the current kernel parameters. After process is called
+    it will contain the new parameters which can be replaced in the
+    origional file when write_config is called.
+
+    All subclasses must define their bootloader and a list of compatible
+    distributions.
+    """
+
+    bootloader = None
+    distribution = None
+    CFGFILE = '/etc/bootloader.conf'
+    ARG_SEPARATOR = '='
+    PARAM_SEPARATOR = ' '
+
+    def __init__(self, module):
+        self.module  = module
+        self.state   = module.params['state']
+        self.name    = module.params['name']
+        self.value   = module.params['value']
+        self.dup     = module.params['dup']
+        self.changed = False
+
+    def read_config(self):
+        pass
+
+    def write_config(self):
+        pass
+
+    def process(self):
+        params = self.param_str.split(self.PARAM_SEPARATOR)
+        new_params = []
+        found = False
+
+        for param in params:
+            if len(param.split(self.ARG_SEPARATOR)) == 2:
+                key, value = param.split(self.ARG_SEPARATOR)
+            else:
+                key = param
+                value = None
+
+            if key == self.name and not(found):
+                # Present
+                if self.state == 'present':
+                    if self.value is not None:
+                        if self.value == value:
+                            found = True
+                        else:
+                            if self.dup:
+                                new_params.append(param)
+                                new_params.append(self.ARG_SEPARATOR.join([self.name, self.value]))
+                            else:
+                                new_params.append(self.ARG_SEPARATOR.join([self.name, self.value]))
+                            found = True
+                            self.changed = True
+                            continue
+                    else:
+                        found = True
+                # Absent
+                else:
+                    if not(self.dup) or (self.value is not None and self.value == value):
+                        self.changed = True
+                        found = True
+                        continue
+            new_params.append(param)
+            
+        if not(found) and self.state == 'present':
+            if self.value is not None:
+                new_params.append(self.ARG_SEPARATOR.join([self.name, self.value]))
+            else:
+                new_params.append(self.name)
+            self.changed = True
+
+        self.param_str = self.PARAM_SEPARATOR.join(new_params)
+
+class GrubCfg(LinuxCfg):
+    """
+    This is the GRUB manipulation class.
+
+    This class implements the following methods from the generic class:-
+        - read_config()
+        - write_config()
+
+    """
+    bootloader    = 'grub'
+    distributions = ['RedHat', 'Fedora']
+    CFGFILE       = '/etc/default/grub'
+    CMDLINE       = 'GRUB_CMDLINE_LINUX'
+    TERMINATOR    = '"'
+
+    def __init__(self, module):
+        super(GrubCfg, self).__init__(module)
+
+    def read_config(self):
+        
+        self.pre_lines  = []
+        self.cmd_line   = ''
+        self.post_lines = []
+        
+        if os.path.isfile(self.CFGFILE):
+            try:
+                # The file is paritioned into
+                # pre_lines ...
+                # cmd_line GRUB_CMDLINE_LINUX
+                # post_lines ...
+                with open(self.CFGFILE, "r") as in_file:
+                    found = False
+                    for line in in_file:
+                        if not(line.startswith(self.CMDLINE)):
+                            if not(found):
+                                self.pre_lines.append(line)
+                            else:
+                                self.post_lines.append(line)
+                        else:
+                            self.cmd_line = line
+            except IOError, e:
+                self.module.fail_json(msg="Failed to open %s: %s" % (self.CFGFILE, str(e)))
+        else:
+            self.module.fail_json(msg="Cannot find file %s" % self.CFGFILE)
+
+        start = self.cmd_line.find(self.TERMINATOR)
+        end = self.cmd_line.rfind(self.TERMINATOR)
+        self.param_str = self.cmd_line[start + 1:end]
+
+    
+    def write_config(self):
+        
+        self.cmd_line = "%s=\"%s\"" % (self.CMDLINE, self.param_str)
+
+        fh, tmp_path = tempfile.mkstemp('.conf', '.ansible_m_grub_', os.path.dirname(self.CFGFILE))
+
+        try:
+            # Reconstruct the changed file
+            # pre_lines ...
+            # cmd_line GRUB_CMDLINE_LINUX 
+            # post_lines ...
+            with open(tmp_path, "w") as out_file:
+                for line in self.pre_lines:
+                    out_file.write(line.strip() + '\n')
+
+                out_file.write(self.cmd_line + '\n')
+
+                for line in self.post_lines:
+                    out_file.write(line.strip() + '\n')
+        except IOError, e:
+            self.module.fail_json(msg="Failed to write to file %s: %s" % (tmp_path, str(e)))
+
+        self.module.atomic_move(tmp_path, self.CFGFILE)
+
+def main():
+    module = AnsibleModule(
+        argument_spec = dict(
+            state = dict(default='present', choices=['present', 'absent'], type='str'),
+            name = dict(required=True, type='str'),
+            value = dict(required=False, type='str'),
+            dup = dict(required=False, aliases=['duplicate'], type='bool')
+        ),
+        supports_check_mode = True
+    )
+
+    cfg = GrubCfg(module)
+
+    cfg.read_config()
+    cfg.process()
+    if cfg.changed and not(module.check_mode):
+        cfg.write_config()
+
+    module.exit_json(changed=cfg.changed)
+
+from ansible.module_utils.basic import *
+if __name__ == '__main__':
+    main()
+
+# vim ts=2:sw=2:et

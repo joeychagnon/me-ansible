@@ -1,0 +1,176 @@
+#! /usr/bin/env python2.7
+# pylint: disable=missing-docstring
+
+import os
+import itertools
+
+DOCUMENTATION = """
+---
+module: id_translate
+short_description: Migrates a users uid/gid.
+description:
+  - Translates the uids and gids of all files in a directory.
+version_added: "1.9.2"
+author: Joseph Chagnon
+requirements:
+  - 
+options:
+  option_name: dest
+    description:
+      - The base path to walk.
+    required: true
+    default: null
+    version_added: 1.9.2
+
+  option_name: uid_from
+    description:
+      - The uid translation target.
+    required: false
+    default: null
+    version_added: 1.9.2
+
+  option_name: uid_to
+    description:
+      - The uid translation replacement.
+    required: false
+    default: null
+    version_added: 1.9.2
+
+  option_name: gid_from
+    description:
+      - The gid translation target.
+    required: false
+    version_added: 1.9.2
+
+  option_name: gid_to
+    description:
+      - The gid translation replacement.
+    required: false
+    version_added: 1.9.2
+"""
+
+# pylint: disable=too-many-instance-attributes
+class IdTranslator(object):
+    """
+    The generic IdTranslator class which is subclasses based on the method of
+    ownership manupulation.
+
+    A subclass must implement the following action methods:-
+        - change_owner(path)
+        - change_group(path)
+
+    All subclasses must define a list of compatible distributions.
+    """
+
+    distribution = None
+
+    def __init__(self, module):
+        self.module = module
+        self.check = module.check_mode
+        self.base = module.params['dest']
+        self.fuid = module.params['uid_from']
+        self.tuid = module.params['uid_to']
+        self.fgid = module.params['gid_from']
+        self.tgid = module.params['gid_to']
+        self.changed = False
+
+    def change_owner(self, path):
+        """
+        Modify the owner of the given path.
+
+        Keyword arguments:
+        path -- the path to modify
+
+        Returns: None
+
+        Notes:
+        - This method must be implemented by the subclass.
+        """
+        pass
+
+    def change_group(self, path):
+        """
+        Modify the group of the given path.
+
+        Keyword arguments:
+        path -- the path to modify
+
+        Returns: None
+
+        Notes:
+        - This method must be implemented by the subclass.
+        """
+        pass
+
+    def process(self):
+        """
+        Walks the specified directory tree and translates uids/gids where
+        appropriate.
+
+        Returns: None
+        """
+        try:
+            # pylint: disable=unused-variable
+            for dirpath, dirnames, filenames in os.walk(self.base):
+                for relpath in itertools.chain([""], filenames):
+                    path = os.path.join(dirpath, relpath)
+                    st_info = os.lstat(path)
+                    if self.fuid and st_info.st_uid == self.fuid:
+                        if not self.check:
+                            self.change_owner(path)
+                        self.changed = True
+                    if self.fgid and st_info.st_gid == self.fgid:
+                        if not self.check:
+                            self.change_group(path)
+                        self.changed = True
+        except IOError as ex:
+            self.module.fail_json(msg="IOError: %s" % ex.args)
+
+class LinuxIdTranslator(IdTranslator):
+    """
+    The Linux specific subclass of IdTranslator.
+    """
+
+    distribution = ['RedHat', 'Fedora']
+    unchanged = -1
+
+    def __init__(self, module):
+        super(LinuxIdTranslator, self).__init__(module)
+
+    def change_owner(self, path):
+        fd = os.open(path, os.O_RDONLY)
+        os.fchown(fd, self.tuid, self.unchanged)
+        os.close(fd)
+
+    def change_group(self, path):
+        fd = os.open(path, os.O_RDONLY)
+        os.fchown(fd, self.unchanged, self.tgid)
+        os.close(fd)
+
+def main():
+    """
+    The entry point of the module.
+    """
+    module = AnsibleModule(
+        # pylint: disable=bad-whitespace
+        argument_spec = dict(
+            dest = dict(required=True, type='str'),
+            uid_from = dict(required=False, type='int'),
+            uid_to = dict(required=True, type='int'),
+            gid_from = dict(required=False, type='int'),
+            gid_to = dict(required=False, type='int')
+        ),
+        supports_check_mode = True
+    )
+
+    translator = LinuxIdTranslator(module)
+    translator.process()
+    module.exit_json(changed=translator.changed)
+
+# pylint: disable=redefined-builtin,wildcard-import,unused-wildcard-import
+# This is how it's specified in the offical documentation.
+from ansible.module_utils.basic import *
+if __name__ == '__main__':
+    main()
+
+# vim ts=4:sw=4:et
