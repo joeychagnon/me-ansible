@@ -1,7 +1,7 @@
 ---
 
 # Packages
-- include: install_packages.yml tags=server,ntp,cups,dns,samba,cron,ssh,http,vpn,php,sql,cloud,tor,mail
+- include: install_packages.yml tags=server,ntp,cups,dns,samba,cron,ssh,http,vpn,php,sql,cloud,tor,mail,emby
 
 # Internal Services
 - include: setup_ntp.yml tags=server,ntp
@@ -20,3 +20,4 @@
 - include: setup_owncloud.yml tags=server,cloud
 - include: setup_tor.yml tags=server,tor
 - include: setup_postfix.yml tags=server,mail
+#- include: setup_emby.yml tags=server,emby

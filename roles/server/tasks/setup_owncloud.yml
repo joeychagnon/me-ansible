@@ -1,5 +1,14 @@
 ---
 
+- name: configure lighttpd for owncloud
+  copy: >
+    src=owncloud.conf
+    dest=/etc/lighttpd/conf.d/owncloud.conf
+    owner=root
+    group=root
+    mode=0644
+  notify: restart lighttpd
+
 - name: configure owncloud
   file: dest=/srv/http/owncloud src=/usr/share/webapps/owncloud state=link
 

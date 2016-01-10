@@ -1,0 +1,13 @@
+---
+
+- name: configure lighttpd for emby
+  copy: >
+    src=emby.conf
+    dest=/etc/lighttpd/conf.d/emby.conf
+    owner=root
+    group=root
+    mode=0644
+  notify: restart lighttpd
+
+- name: start and enable emby
+  service: name=emby-server state=started enabled=yes
